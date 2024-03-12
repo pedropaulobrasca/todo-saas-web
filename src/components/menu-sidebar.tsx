@@ -54,7 +54,7 @@ export function MenuSidebar({
               <a className="flex items-center gap-3 rounded-lg py-2" href="#">
                 <Home className="size-4" />
                 <span className={cn(!isToggleMenuSidebar ? 'hidden' : 'block')}>
-                  Home
+                  Dashboard
                 </span>
               </a>
             </Button>
