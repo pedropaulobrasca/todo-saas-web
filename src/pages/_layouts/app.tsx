@@ -1,15 +1,15 @@
 import { Outlet } from 'react-router-dom'
 
-import { MenuHeader } from '@/components/menu-header'
+import { MenuSidebar } from '@/components/menu-sidebar'
 
 export function AppLayout() {
   return (
-    <div>
-      <MenuHeader />
+    <div className="grid h-screen grid-cols-[280px_1fr]">
+      <MenuSidebar />
 
-      <div>
+      <main className="overflow-auto">
         <Outlet />
-      </div>
+      </main>
     </div>
   )
 }
