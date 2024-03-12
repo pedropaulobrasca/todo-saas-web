@@ -4,13 +4,14 @@ import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
 import { NotFound } from './pages/404'
 import { Dashboard } from './pages/app/dashboard'
+import LandingPage from './pages/app/landing-page'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <h1>Landing Page</h1>,
+    element: <LandingPage />,
   },
   {
     path: '/',
