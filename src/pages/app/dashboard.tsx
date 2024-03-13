@@ -51,7 +51,7 @@ export function Dashboard() {
       </div>
       <Card>
         <CardContent className="p-0">
-          <div className="grid grid-cols-4 gap-4 overflow-auto p-4 max-sm:grid-cols-1">
+          <div className="grid grid-cols-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 20 }).map((_, index) => (
               <ContextMenu key={index}>
                 <ContextMenuTrigger>

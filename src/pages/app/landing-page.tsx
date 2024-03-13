@@ -1,4 +1,4 @@
-import { Tornado } from 'lucide-react'
+import { Tornado, Workflow } from 'lucide-react'
 
 import { BackgroundBeams } from '@/components/ui/background-beams'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,7 @@ export default function LandingPage() {
             <Tornado className="h-6 w-6" />
             <span className="sr-only">todo.saas</span>
           </a>
-          <nav className="ml-auto flex gap-4 sm:gap-6">
+          <nav className="ml-auto flex items-center gap-4 sm:gap-6">
             <a
               className="text-sm font-medium underline-offset-4 hover:underline"
               href="#"
@@ -38,6 +38,14 @@ export default function LandingPage() {
             >
               Contact
             </a>
+            <Button className="h-8" variant={'outline'} asChild>
+              <a
+                className="text-sm font-medium underline-offset-4 hover:underline"
+                href="/app"
+              >
+                Login
+              </a>
+            </Button>
           </nav>
         </header>
         <main className="flex-1">
@@ -113,31 +121,13 @@ export default function LandingPage() {
               <div className="divide-y rounded-lg border">
                 <div className="grid w-full grid-cols-3 items-stretch justify-center divide-x md:grid-cols-3">
                   <div className="mx-auto flex w-full items-center justify-center p-4 sm:p-8">
-                    <img
-                      alt="Logo"
-                      className="aspect-[2/1] overflow-hidden rounded-lg object-contain object-center"
-                      height="70"
-                      src="/placeholder.svg"
-                      width="140"
-                    />
+                    <Workflow className="h-14 w-14" />
                   </div>
                   <div className="mx-auto flex w-full items-center justify-center p-4 sm:p-8">
-                    <img
-                      alt="Logo"
-                      className="aspect-[2/1] overflow-hidden rounded-lg object-contain object-center"
-                      height="70"
-                      src="/placeholder.svg"
-                      width="140"
-                    />
+                    <Workflow className="h-14 w-14" />
                   </div>
                   <div className="mx-auto flex w-full items-center justify-center p-8">
-                    <img
-                      alt="Logo"
-                      className="aspect-[2/1] overflow-hidden rounded-lg object-contain object-center"
-                      height="70"
-                      src="/placeholder.svg"
-                      width="140"
-                    />
+                    <Workflow className="h-14 w-14" />
                   </div>
                 </div>
                 <div className="grid w-full grid-cols-3 items-stretch justify-center divide-x md:grid-cols-3">
@@ -151,22 +141,10 @@ export default function LandingPage() {
                     />
                   </div>
                   <div className="mx-auto flex w-full items-center justify-center p-4 sm:p-8">
-                    <img
-                      alt="Logo"
-                      className="aspect-[2/1] overflow-hidden rounded-lg object-contain object-center"
-                      height="70"
-                      src="/placeholder.svg"
-                      width="140"
-                    />
+                    <Workflow className="h-14 w-14" />
                   </div>
                   <div className="mx-auto flex w-full items-center justify-center p-4 sm:p-8">
-                    <img
-                      alt="Logo"
-                      className="aspect-[2/1] overflow-hidden rounded-lg object-contain object-center"
-                      height="70"
-                      src="/placeholder.svg"
-                      width="140"
-                    />
+                    <Workflow className="h-14 w-14" />
                   </div>
                 </div>
               </div>

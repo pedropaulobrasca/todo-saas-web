@@ -5,7 +5,7 @@ import { MenuSidebar } from '@/components/menu-sidebar'
 import { cn } from '@/lib/utils'
 
 export function AppLayout() {
-  const [isOpenMenuSidebar, setIsOpenMenuSidebar] = useState(true)
+  const [isOpenMenuSidebar, setIsOpenMenuSidebar] = useState(false)
 
   function toggleMenuSidebar() {
     setIsOpenMenuSidebar(!isOpenMenuSidebar)
