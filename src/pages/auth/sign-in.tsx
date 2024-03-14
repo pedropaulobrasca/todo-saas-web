@@ -6,6 +6,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 export function SignIn() {
+  const handleButtonSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    window.location.href = '/app'
+  }
+
   return (
     <>
       <Helmet title="Login" />
@@ -30,7 +35,11 @@ export function SignIn() {
               <Input id="email" type="email" />
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              onClick={handleButtonSubmit}
+            >
               Acessar Painel
             </Button>
           </form>
