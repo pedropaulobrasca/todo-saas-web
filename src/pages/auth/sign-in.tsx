@@ -1,15 +1,34 @@
 import { Helmet } from 'react-helmet-async'
+import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { api } from '@/lib/axios'
+
+type FormData = {
+  email: string
+}
 
 export function SignIn() {
-  const handleButtonSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    window.location.href = '/app'
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm<FormData>()
+
+  const onSubmit = handleSubmit(async (data: FormData) => {
+    console.log(data)
+
+    const response = await api.post('/auth/login/magic-link', {
+      email: data.email,
+    })
+
+    if (errors) console.log(errors)
+
+    console.log(response)
+  })
 
   return (
     <>
@@ -29,17 +48,13 @@ export function SignIn() {
             </p>
           </div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={onSubmit}>
             <div className="space-y-2">
               <Label htmlFor="email">Seu e-mail</Label>
-              <Input id="email" type="email" />
+              <Input id="email" type="email" {...register('email')} />
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              onClick={handleButtonSubmit}
-            >
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
               Acessar Painel
             </Button>
           </form>
