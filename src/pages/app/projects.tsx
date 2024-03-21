@@ -1,8 +1,21 @@
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 
+import { createProject } from '@/api/create-project'
 import { getProjectsByUserId } from '@/api/get-projects-by-user-id'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -16,15 +29,24 @@ import { getUserIdByToken } from '@/utils/get-userid-by-token'
 
 export function Projects() {
   const { userId } = getUserIdByToken()
+  const [newProjectTitle, setNewProjectTitle] = useState('')
 
   const {
     data: projects,
     isLoading,
     isError,
+    refetch, // Adicione refetch para recarregar os projetos após adicionar um novo
   } = useQuery<Project[]>({
     queryKey: ['projects'],
     queryFn: () => getProjectsByUserId({ id: userId }),
   })
+
+  const handleAddProject = async () => {
+    if (!newProjectTitle.trim()) return
+    await createProject({ title: newProjectTitle, userId })
+    setNewProjectTitle('')
+    refetch()
+  }
 
   if (isLoading) return <div>Loading...</div>
   if (isError) return <div>Error loading projects</div>
@@ -36,9 +58,32 @@ export function Projects() {
     <>
       <div className="flex items-center gap-4">
         <h1 className="text-lg font-semibold md:text-2xl">Projects</h1>
-        <Button className="ml-auto" size="sm">
-          New Project
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="ml-auto" size="sm">
+              New Project
+            </Button>
+          </DialogTrigger>
+          <DialogOverlay className="fixed inset-0 bg-black/40" />
+          <DialogContent className="flex max-w-[400px] flex-col rounded-t-[10px]">
+            <DialogHeader>
+              <DialogTitle>Add New Project</DialogTitle>
+            </DialogHeader>
+            <Input
+              type="text"
+              placeholder="Project Title"
+              value={newProjectTitle}
+              onChange={(e) => setNewProjectTitle(e.target.value)}
+              className="input-class" // Substitua "input-class" pela sua classe de estilo real
+            />
+            <DialogFooter>
+              <Button onClick={handleAddProject}>Submit</Button>
+              <DialogClose>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
       <Card>
         <CardContent className="p-0">
