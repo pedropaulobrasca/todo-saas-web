@@ -1,3 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
+import { getProjectsByUserId } from '@/api/get-projects-by-user-id'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -9,36 +12,26 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Project } from '@/types/types'
-
-const projects: Project[] = [
-  {
-    id: 1,
-    name: 'Website Redesign',
-    tasksCount: 10,
-  },
-  {
-    id: 2,
-    name: 'New Marketing Plan',
-    tasksCount: 4,
-  },
-  {
-    id: 3,
-    name: 'Product Launch',
-    tasksCount: 20,
-  },
-  {
-    id: 4,
-    name: 'Infrastructure Upgrade',
-    tasksCount: 8,
-  },
-  {
-    id: 5,
-    name: 'Customer Feedback Initiative',
-    tasksCount: 15,
-  },
-]
+import { getUserIdByToken } from '@/utils/get-userid-by-token'
 
 export function Projects() {
+  const { userId } = getUserIdByToken()
+
+  const {
+    data: projects,
+    isLoading,
+    isError,
+  } = useQuery<Project[]>({
+    queryKey: ['projects'],
+    queryFn: () => getProjectsByUserId({ id: userId }),
+  })
+
+  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>Error loading projects</div>
+
+  // Agora temos certeza de que projects é indefinido ou um array, e tratamos o caso indefinido.
+  if (!projects) return <div>No projects found</div>
+
   return (
     <>
       <div className="flex items-center gap-4">
@@ -64,9 +57,9 @@ export function Projects() {
                   <TableRow key={project.id}>
                     <TableCell></TableCell>
                     <TableCell>{project.id}</TableCell>
-                    <TableCell>{project.name}</TableCell>
+                    <TableCell>{project.title}</TableCell>
                     <TableCell className="text-right">
-                      {project.tasksCount}
+                      {project.todoCount || 'N/A'}
                     </TableCell>
                   </TableRow>
                 ))}

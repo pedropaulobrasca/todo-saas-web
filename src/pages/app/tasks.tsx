@@ -1,3 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+
+import { getTodosByUserId } from '@/api/get-todos-by-user-id'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,80 +16,9 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
-import { Todo } from '@/types/types'
+import { getUserIdByToken } from '@/utils/get-userid-by-token'
 
-const todos: Todo[] = [
-  {
-    id: 1,
-    title: 'Finish the report',
-    description: 'Complete the annual report by EOD',
-    status: 'in progress',
-    projectId: 1,
-  },
-  {
-    id: 2,
-    title: 'Update website',
-    description: 'Refresh the homepage design',
-    status: 'pending',
-    projectId: 1,
-  },
-  {
-    id: 3,
-    title: 'Fix login bug',
-    description: 'Resolve the issue preventing user logins',
-    status: 'in progress',
-    projectId: 2,
-  },
-  {
-    id: 4,
-    title: 'Plan team meeting',
-    description: 'Schedule the monthly team meeting',
-    status: 'completed',
-    projectId: 2,
-  },
-  {
-    id: 5,
-    title: 'Review marketing plan',
-    description: 'Go through the Q3 marketing plan',
-    status: 'pending',
-    projectId: 3,
-  },
-  {
-    id: 6,
-    title: 'Test new features',
-    description: 'QA the new features before release',
-    status: 'in progress',
-    projectId: 3,
-  },
-  {
-    id: 7,
-    title: 'Email newsletter',
-    description: 'Draft the content for the next email blast',
-    status: 'pending',
-    projectId: 4,
-  },
-  {
-    id: 8,
-    title: 'Clean up database',
-    description: 'Remove outdated records from the database',
-    status: 'completed',
-    projectId: 4,
-  },
-  {
-    id: 9,
-    title: 'Prepare presentation',
-    description: 'Create slides for the upcoming webinar',
-    status: 'in progress',
-    projectId: 5,
-  },
-  {
-    id: 10,
-    title: 'Renew domain',
-    description: 'Renew the company domain name',
-    status: 'completed',
-    projectId: 5,
-  },
-]
+import { Todo } from '../../types/types'
 
 export function Tasks() {
   function handleContextMenu() {
@@ -103,6 +35,23 @@ export function Tasks() {
     }
   }
 
+  const { userId } = getUserIdByToken()
+
+  const {
+    data: todos,
+    isLoading,
+    isError,
+  } = useQuery<Todo[]>({
+    queryKey: ['tasks'],
+    queryFn: () => getTodosByUserId({ id: userId }),
+  })
+
+  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>Error loading tasks</div>
+
+  // Now we're sure todos is either undefined or an array, and we handle the undefined case.
+  if (!todos) return <div>No tasks found</div>
+
   return (
     <>
       <div className="flex items-center gap-4">
@@ -114,35 +63,40 @@ export function Tasks() {
       <Card>
         <CardContent className="p-0">
           <div className="grid grid-cols-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
-            {todos.map((todo, index) => (
-              <ContextMenu key={index}>
-                <ContextMenuTrigger>
-                  <Card className="min-w-[250px] max-sm:w-full">
-                    <CardHeader className="flex items-start">
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-500">
-                          Project ID: {todo.projectId}
-                        </p>
-                        <CardTitle>{todo.title}</CardTitle>
-                        <CardDescription>{todo.description}</CardDescription>
-                      </div>
-                      <Badge variant="outline">{todo.status}</Badge>
-                    </CardHeader>
-                  </Card>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                  <ContextMenuItem onClick={handleContextMenu}>
-                    Edit
-                  </ContextMenuItem>
-                  <ContextMenuItem onClick={handleContextMenu}>
-                    Mark as completed
-                  </ContextMenuItem>
-                  <ContextMenuItem onClick={handleContextMenu}>
-                    Delete
-                  </ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
-            ))}
+            {Array.isArray(todos) &&
+              todos.map((todo: Todo) => (
+                <ContextMenu key={todo.id}>
+                  <ContextMenuTrigger>
+                    <Card className="min-w-[250px] max-sm:w-full">
+                      <CardHeader className="flex items-start">
+                        <div className="w-full flex-1 space-y-1">
+                          <p className="text-sm text-gray-500">
+                            {todo.project.title}
+                          </p>
+                          <CardTitle>{todo.title}</CardTitle>
+                          <CardDescription>
+                            {todo.description || 'N/A'}
+                          </CardDescription>
+                        </div>
+                        <div className="flex w-full items-center justify-end">
+                          <Badge variant="outline">{todo.status}</Badge>
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuItem onClick={handleContextMenu}>
+                      Edit
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={handleContextMenu}>
+                      Mark as completed
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={handleContextMenu}>
+                      Delete
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
+              ))}
           </div>
         </CardContent>
       </Card>

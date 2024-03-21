@@ -1,13 +1,17 @@
-export type Todo = {
-  id: number
-  title: string
-  description: string
-  status: 'pending' | 'in progress' | 'completed'
-  projectId: number
-}
-
 export type Project = {
   id: number
-  name: string
-  tasksCount: number
+  title: string
+  todoCount: number
+  createdAt: string
+  userId: number
+}
+
+export type Todo = {
+  id: number
+  description: string
+  status: string
+  title: string
+  projectId: number
+  createdAt: string
+  project: Project
 }
