@@ -54,7 +54,7 @@ export function MenuSidebar({
           <Separator />
           <div className="mt-4 flex-1 overflow-auto py-2">
             <nav className="grid items-start px-4 text-sm font-medium">
-              <Button
+              {/* <Button
                 asChild
                 className="flex justify-start"
                 variant={isPathActive('/app') ? 'outline' : 'ghost'}
@@ -70,7 +70,7 @@ export function MenuSidebar({
                     Dashboard
                   </span>
                 </a>
-              </Button>
+              </Button> */}
               <Button
                 asChild
                 className="flex justify-start"
