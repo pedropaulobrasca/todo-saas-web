@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 
+import { createTodo } from '@/api/create-todo'
+import { getProjectsByUserId } from '@/api/get-projects-by-user-id'
 import { getTodosByUserId } from '@/api/get-todos-by-user-id'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -16,9 +19,27 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { getUserIdByToken } from '@/utils/get-userid-by-token'
 
-import { Todo } from '../../types/types'
+import { Project, Todo } from '../../types/types'
 
 export function Tasks() {
   function handleContextMenu() {
@@ -36,15 +57,38 @@ export function Tasks() {
   }
 
   const { userId } = getUserIdByToken()
+  const [newTodoTitle, setNewTodoTitle] = useState('')
+  const [newTodoProjectId, setNewTodoProjectId] = useState('')
+  const [newTodoDescription, setNewTodoDescription] = useState('')
 
   const {
     data: todos,
     isLoading,
     isError,
+    refetch,
   } = useQuery<Todo[]>({
     queryKey: ['tasks'],
     queryFn: () => getTodosByUserId({ id: userId }),
   })
+
+  const { data: projects } = useQuery<Project[]>({
+    queryKey: ['projects'],
+    queryFn: () => getProjectsByUserId({ id: userId }),
+  })
+
+  const handleAddTodo = async () => {
+    console.log(newTodoTitle, newTodoProjectId, newTodoDescription)
+    await createTodo({
+      title: newTodoTitle,
+      userId: Number(userId),
+      projectId: Number(newTodoProjectId),
+      description: newTodoDescription,
+      status: 'idle',
+    })
+    setNewTodoTitle('')
+    setNewTodoProjectId('') // Limpa o projectId após adicionar
+    refetch() // Recarrega as tarefas após adicionar uma nova
+  }
 
   if (isLoading) return <div>Loading...</div>
   if (isError) return <div>Error loading tasks</div>
@@ -56,9 +100,51 @@ export function Tasks() {
     <>
       <div className="flex items-center gap-4">
         <h1 className="text-lg font-semibold md:text-2xl">Tasks</h1>
-        <Button className="ml-auto" size="sm">
-          New Task
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="ml-auto" size="sm">
+              New Task
+            </Button>
+          </DialogTrigger>
+          <DialogOverlay className="fixed inset-0 bg-black/40" />
+          <DialogContent className="flex max-w-[400px] flex-col rounded-t-[10px]">
+            <DialogHeader>
+              <DialogTitle>Add New Task</DialogTitle>
+            </DialogHeader>
+            <Input
+              type="text"
+              placeholder="Task Title"
+              value={newTodoTitle}
+              onChange={(e) => setNewTodoTitle(e.target.value)}
+              className="input-class" // Substitua "input-class" pela sua classe de estilo real
+            />
+            <Input
+              type="text"
+              placeholder="Description"
+              value={newTodoDescription}
+              onChange={(e) => setNewTodoDescription(e.target.value)}
+              className="input-class" // Substitua "input-class" pela sua classe de estilo real
+            />
+            <Select onValueChange={(e) => setNewTodoProjectId(e)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select project" />
+              </SelectTrigger>
+              <SelectContent>
+                {projects?.map((project) => (
+                  <SelectItem key={project.id} value={project.id.toString()}>
+                    {project.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <DialogFooter>
+              <Button onClick={handleAddTodo}>Submit</Button>
+              <DialogClose>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
       <Card>
         <CardContent className="p-0">
